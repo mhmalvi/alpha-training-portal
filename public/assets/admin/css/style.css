@@ -2114,6 +2114,7 @@ button.dim:active:before {
 .bootstrap-tagsinput {
   border: 1px solid #e5e6e7;
   box-shadow: none;
+  display: block;
 }
 /* PAGINATIN */
 .pagination > .active > a,

@@ -44,9 +44,9 @@ class BlogController extends Controller
      */
     public function store(BlogRequest $request)
     {
-        if($request->hasFile('image')){
+        if ($request->hasFile('image')) {
             $slug = SlugService::createSlug(Blog::class, 'blog_slug', $request->title);
-            
+
             //check if directory exist or not
             if (!Storage::exists("public/blogs")) {
                 Storage::makeDirectory("public/blogs");
@@ -55,11 +55,11 @@ class BlogController extends Controller
             $image = $request->file('image');
             $imgExtension = $image->getClientOriginalExtension();
 
-            $file = date('dmy-hms').'.'.$imgExtension;
-            
+            $file = date('dmy-hms') . '.' . $imgExtension;
+
             $category = $request->category;
 
-            if(is_null($request->category)){
+            if (is_null($request->category)) {
                 $category = null;
             }
 
@@ -70,6 +70,9 @@ class BlogController extends Controller
                 'category_id' => $category,
                 'blog_summery' => $request->summary,
                 'blog_details' => $request->summernote,
+                'meta_tags' => $request->meta_tags,
+                'meta_keys' => $request->meta_keys,
+                'meta_desc' => $request->meta_desc,
                 'thumbnail' => $file
             ];
 
@@ -82,19 +85,17 @@ class BlogController extends Controller
                     'message'   =>  'nothing went wrong',
                     'alert-type'    =>  'success'
                 ];
-        
-                return redirect()->back()->with($notification);
 
+                return redirect()->back()->with($notification);
             } catch (\Throwable $th) {
                 $notification = [
                     // 'message'   =>  'oops! Something went wrong',
                     'message'   =>  $th->getMessage(),
                     'alert-type'    =>  'warning'
                 ];
-        
+
                 return redirect()->back()->with($notification);
             }
-
         }
     }
 
@@ -118,10 +119,10 @@ class BlogController extends Controller
     public function edit($id)
     {
         $blogId = Crypt::decryptString($id);
-        $data = Blog::findOrFail($blogId);
+        $blog = Blog::findOrFail($blogId);
         $categories = Category::all();
 
-        return view('admin.blogs.edit', compact('data', 'categories'));
+        return view('admin.blogs.edit', compact('blog', 'categories'));
     }
 
     /**
@@ -135,46 +136,47 @@ class BlogController extends Controller
     {
         try {
             $data = Blog::firstWhere('id', $id);
-        
+            $slug = SlugService::createSlug(Blog::class, 'blog_slug', $request->title);
 
             $data->blog_title = $request->title;
-            $slug = SlugService::createSlug(Blog::class, 'blog_slug', $request->title);
             $data->blog_slug = $slug;
             $data->blog_summery = $request->summary;
             $data->blog_details = $request->summernote;
             $data->category_id = $request->category;
-    
-            if($request->hasFile('image')){
+            $data->meta_tags = $request->meta_tags;
+            $data->meta_keys = $request->meta_keys;
+            $data->meta_desc = $request->meta_desc;
+
+            if ($request->hasFile('image')) {
                 //delete the old image first
                 Storage::delete('public/blogs/' . $data->thumbnail);
-    
+
                 $image = $request->file('image');
                 $imgExtension = $image->getClientOriginalExtension();
-    
-                $file = date('dmy-hms').'.'.$imgExtension;
-    
+
+                $file = date('dmy-hms') . '.' . $imgExtension;
+
                 $data->thumbnail = $file;
 
                 //store image into storage directory
                 Storage::putFileAs('public/blogs', $image, $file);
             }
-            
+
             $data->save();
 
             $notification = [
                 'message'   =>  'nothing went wrong',
                 'alert-type'    =>  'success'
             ];
-    
-            return redirect()->route('admin.blog.index')->with($notification);
 
+            return redirect()->route('admin.blog.index')->with($notification);
         } catch (\Throwable $th) {
             $notification = [
                 // 'message'   =>  'oops! Something went wrong',
                 'message'   =>  $th,
                 'alert-type'    =>  'warning'
             ];
-    
+
             return redirect()->back()->with($notification);
         }
     }
@@ -188,7 +190,7 @@ class BlogController extends Controller
     public function destroy($id)
     {
         $data = Blog::findOrFail($id);
-        
+
         Storage::delete('public/blogs/' . $data->thumbnail);
 
         $data->delete();
@@ -200,20 +202,20 @@ class BlogController extends Controller
     /**
      * Upload image with tinymce
      */
-    public function uploadFile(Request $request){
-        if($request->hasFile('file')) {
+    public function uploadFile(Request $request)
+    {
+        if ($request->hasFile('file')) {
             $originName = $request->file('file')->getClientOriginalName();
             $fileName = pathinfo($originName, PATHINFO_FILENAME);
             $extension = $request->file('file')->getClientOriginalExtension();
-            $fileName = time().'.'.$extension;
-        
+            $fileName = time() . '.' . $extension;
+
             $request->file('file')->move(public_path('blogImages'), $fileName);
-   
-            $url = asset('blogImages/'.$fileName); 
+
+            $url = asset('blogImages/' . $fileName);
 
 
             return response()->json(['location' => $url])->header('content-type', 'application/json');
         }
     }
-
 }
