@@ -1,5 +1,14 @@
 <script>
     $(document).ready(function(){
+        $("#title").on("keyup", function(){
+            var title = $(this).val();
+            var trims = $.trim(title);
+
+            var slug = trims.replace(/[^a-z0-9]/gi, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+
+            $("#url-slug").val(slug.toLowerCase());
+        });
+
         $('#meta_tags').tagsinput({
             tagClass: 'label label-primary'
         });
