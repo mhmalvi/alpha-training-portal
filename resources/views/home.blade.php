@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Blogs')
+
 @section('content')
 <div class="section-content pvt0">
     <div class="container">

@@ -1,17 +1,24 @@
 @extends('layouts.app')
+
+@section('title', $blog->blog_title)
+
 @push('seo')
     <meta name="tags" content="{{$blog->meta_tags}}"/>
-    <meta name="tags" content="{{$blog->meta_keys}}"/>
+    <meta name="keywords" content="{{$blog->meta_keys}}"/>
+@endpush
+
+@push('og')
     <meta property="og:tags" content="{{$blog->meta_tags}}">
     <meta property="og:keywords" content="{{$blog->meta_keys}}">
     <meta property="og:description" content="{{$blog->meta_desc}}">
-    <meta property="og:url" content="https://blogs.atr.edu.au/blogs/{{$blog->blog_slug}}">
     <meta property="og:title" content="{{ $blog->blog_title }}" />
     <meta property="og:image" content="{{asset('storage/app/public/blogs/'.$blog->thumbnail)}}" />
 @endpush
+
 @push('css')
-<link rel="stylesheet" type="text/css" href="{{asset('assets/error/css/style.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('assets/error/css/style.css')}}">
 @endpush
+
 @section('content')
 <div class="section-content pvt0">
     @if (isset($blog))
