@@ -13,18 +13,7 @@ class Blog extends Model
 {
     use HasFactory, Sluggable, SoftDeletes;
 
-    protected $fillable = [
-        'user_id',
-        'blog_title',
-        'blog_slug',
-        'category_id',
-        'blog_summery',
-        'blog_details',
-        'meta_tags',
-        'meta_keys',
-        'meta_desc',
-        'thumbnail'
-    ];
+    protected $guarded = [];
 
     /**
      * Return the sluggable configuration array for this model.

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use \Cviebrock\EloquentSluggable\Services\SlugService;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\BlogRequest;
+use App\Http\Requests\BlogCreateRequest;
+use App\Http\Requests\BlogUpdateRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use App\Models\Blog;
@@ -41,7 +41,7 @@ class BlogController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(BlogRequest $request)
+    public function store(BlogCreateRequest $request)
     {
         try {
             $request->save();
@@ -95,37 +95,10 @@ class BlogController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(BlogUpdateRequest $request, $id)
     {
         try {
-            $data = Blog::firstWhere('id', $id);
-            $slug = SlugService::createSlug(Blog::class, 'blog_slug', $request->title);
-
-            $data->blog_title = $request->title;
-            $data->blog_slug = $slug;
-            $data->blog_summery = $request->summary;
-            $data->blog_details = $request->summernote;
-            $data->category_id = $request->category;
-            $data->meta_tags = $request->meta_tags;
-            $data->meta_keys = $request->meta_keys;
-            $data->meta_desc = $request->meta_desc;
-
-            if ($request->hasFile('image')) {
-                //delete the old image first
-                Storage::delete('public/blogs/' . $data->thumbnail);
-
-                $image = $request->file('image');
-                $imgExtension = $image->getClientOriginalExtension();
-
-                $file = date('dmy-hms') . '.' . $imgExtension;
-
-                $data->thumbnail = $file;
-
-                //store image into storage directory
-                Storage::putFileAs('public/blogs', $image, $file);
-            }
-
-            $data->save();
+            $request->update(Blog::findOrFail($id));
 
             $notification = [
                 'message'   =>  'nothing went wrong',
@@ -135,8 +108,7 @@ class BlogController extends Controller
             return redirect()->route('admin.blog.index')->with($notification);
         } catch (\Throwable $th) {
             $notification = [
-                // 'message'   =>  'oops! Something went wrong',
-                'message'   =>  $th,
+                'message'   =>  'oops! Something went wrong',
                 'alert-type'    =>  'warning'
             ];
 

@@ -17,10 +17,28 @@
                         <div class="form-group">
                             <input type="text" name="title" id="title" class="form-control" placeholder="Lets give a title..." value="{{$blog->blog_title}}"/>
                             <cite class="tex-light" style="font-size: 8px; display: block;">*Max 255 characters</cite>
+                            @error('title')
+                                <small class="text-danger">{{$message}}</small>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="slug">https://blogs.atr.edu.au/blogs/</span>
+                                </div>
+                                <input type="text" class="form-control" id="url-slug" name="urlSlug" aria-describedby="slug" value="{{$blog->blog_slug}}">
+                            </div>
+                            <cite class="tex-light" style="font-size: 8px; display: block;">*URL Slug</cite>
+                            @error('urlSlug')
+                                <small class="text-danger">{{$message}}</small>
+                            @enderror
                         </div>
                         <div class="form-group">
                             <textarea name="summary" rows="3" class="form-control" style="resize: none;" placeholder="Lets add a summery...">{{$blog->blog_summery}}</textarea>
                             <cite class="tex-light" style="font-size: 8px; display: block;">*Max 255 characters</cite>
+                            @error('summary')
+                                <small class="text-danger">{{$message}}</small>
+                            @enderror
                         </div>
                         <div class="form-group">
                             <label for="category">Category</label>
@@ -32,6 +50,9 @@
                                     @endforeach
                                 @endisset
                             </select>
+                            @error('category')
+                                <small class="text-danger">{{$message}}</small>
+                            @enderror
                         </div>
                     </div>
                 </div>
@@ -40,6 +61,10 @@
                         <div>
                             <textarea name="summernote" class="desc" class="form-control">{{ $blog->blog_details }}</textarea>
                         </div>
+
+                        @error('summernote')
+                            <small class="text-danger">{{$message}}</small>
+                        @enderror
                     </div>
                 </div>
                 <div class="ibox">
@@ -66,6 +91,9 @@
                             </div>
                             <div class="col-lg-6">
                                 <div id="image"></div>
+                                @error('image')
+                                    <small class="text-danger">{{$message}}</small>
+                                @enderror
                             </div>
                         </div>
                     </div>
