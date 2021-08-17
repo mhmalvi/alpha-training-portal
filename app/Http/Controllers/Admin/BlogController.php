@@ -140,10 +140,7 @@ class BlogController extends Controller
     public function uploadFile(Request $request)
     {
         if ($request->hasFile('file')) {
-            $originName = $request->file('file')->getClientOriginalName();
-            $fileName = pathinfo($originName, PATHINFO_FILENAME);
-            $extension = $request->file('file')->getClientOriginalExtension();
-            $fileName = time() . '.' . $extension;
+            $fileName = pathinfo($request->file('file')->getClientOriginalName(), PATHINFO_FILENAME);
 
             $request->file('file')->move(public_path('blogImages'), $fileName);
 

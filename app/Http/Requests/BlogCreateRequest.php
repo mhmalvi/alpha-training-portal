@@ -30,7 +30,6 @@ class BlogCreateRequest extends BlogRequest
             'blog_slug' => 'unique:App\Models\Blog,blog_slug',
             'summary' => 'required|max:255',
             'summernote' => 'required',
-            'image' => 'required|image|mimes:png,jpg,jpeg|max:2048'
         ];
     }
 
@@ -48,7 +47,8 @@ class BlogCreateRequest extends BlogRequest
             'meta_tags' => $this->meta_tags,
             'meta_keys' => $this->meta_keys,
             'meta_desc' => $this->meta_desc,
-            'thumbnail' => ($this->hasFile('image')) ? $this->saveFile() : null
+            'thumbnail' => ($this->hasFile('image')) ? $this->saveFile() : null,
+            'thumbnail_alt' => $this->has('thumbnail_alt') ? $this->thumbnail_alt : null
         ]);
 
         return $blog;

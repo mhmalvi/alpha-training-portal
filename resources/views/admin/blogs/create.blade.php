@@ -83,6 +83,19 @@
                             </div>
                             <div class="col-lg-6">
                                 <div id="image"></div>
+
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="thumbnail_title" value="{{ old('thumbnail_title') }}" placeholder="Optionally you can put image title..">
+                                    @error('thumbnail_title ')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="thumbnail_alt" value="{{ old('thumbnail_alt') }}" placeholder="Optionally you can put image alt..">
+                                    @error('thumbnail_alt')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
                     </div>
