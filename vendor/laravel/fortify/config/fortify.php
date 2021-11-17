@@ -10,8 +10,18 @@ return [
     'email' => 'email',
     'views' => true,
     'home' => '/home',
+    'prefix' => '',
+    'domain' => null,
     'limiters' => [
         'login' => null,
+    ],
+    'redirects' => [
+        'login' => null,
+        'logout' => null,
+        'password-confirmation' => null,
+        'register' => null,
+        'email-verification' => null,
+        'password-reset' => null,
     ],
     'features' => [
         Features::registration(),

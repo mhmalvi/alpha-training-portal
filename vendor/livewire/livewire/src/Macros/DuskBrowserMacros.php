@@ -2,8 +2,9 @@
 
 namespace Livewire\Macros;
 
+use function Livewire\str;
+use Facebook\WebDriver\WebDriverBy;
 use PHPUnit\Framework\Assert as PHPUnit;
-use Illuminate\Support\Str;
 
 class DuskBrowserMacros
 {
@@ -75,7 +76,7 @@ class DuskBrowserMacros
         return function ($js, $expects = true) {
             /** @var \Laravel\Dusk\Browser $this */
             PHPUnit::assertEquals($expects, head($this->script(
-                Str::start( $js, 'return ')
+                str($js)->start('return ')
             )));
 
             return $this;
@@ -88,6 +89,14 @@ class DuskBrowserMacros
             /** @var \Laravel\Dusk\Browser $this */
             $this->script([$js]);
 
+            return $this;
+        };
+    }
+
+    public function scrollTo()
+    {
+        return function ($selector) {
+            $this->browser->scrollTo($selector);
             return $this;
         };
     }
@@ -171,6 +180,72 @@ class DuskBrowserMacros
         return function () {
             /** @var \Laravel\Dusk\Browser $this */
             return tap($this)->script("window.dispatchEvent(new Event('offline'))");
+        };
+    }
+
+    public function selectMultiple()
+    {
+        return function ($field, $values = []) {
+            $element = $this->resolver->resolveForSelection($field);
+
+            $options = $element->findElements(WebDriverBy::tagName('option'));
+
+            if (empty($values)) {
+                $maxSelectValues = sizeof($options) - 1;
+                $minSelectValues = rand(0, $maxSelectValues);
+                foreach (range($minSelectValues, $maxSelectValues) as $optValue) {
+                    $options[$optValue]->click();
+                }
+            } else {
+                foreach ($options as $option) {
+                    $optValue = (string)$option->getAttribute('value');
+                    if (in_array($optValue, $values)) {
+                        $option->click();
+                    }
+                }
+            }
+
+            return $this;
+        };
+    }
+
+    public function assertConsoleLogHasWarning()
+    {
+        return function($expectedMessage){
+            $logs = $this->driver->manage()->getLog('browser');
+
+            $containsError = false;
+
+            foreach ($logs as $log) {
+                if (! isset($log['message']) || ! isset($log['level']) || $log['level'] !== 'WARNING') continue;
+
+
+                if(str($log['message'])->contains($expectedMessage)) {
+                    $containsError = true;
+                }
+            }
+
+            PHPUnit::assertTrue($containsError, "Console log error message \"{$expectedMessage}\" not found");
+        };
+    }
+
+    public function assertConsoleLogMissingWarning()
+    {
+        return function($expectedMessage){
+            $logs = $this->driver->manage()->getLog('browser');
+
+            $containsError = false;
+
+            foreach ($logs as $log) {
+                if (! isset($log['message']) || ! isset($log['level']) || $log['level'] !== 'WARNING') continue;
+
+
+                if(str($log['message'])->contains($expectedMessage)) {
+                    $containsError = true;
+                }
+            }
+
+            PHPUnit::assertFalse($containsError, "Console log error message \"{$expectedMessage}\" was found");
         };
     }
 }

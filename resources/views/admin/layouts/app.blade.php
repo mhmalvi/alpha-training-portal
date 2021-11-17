@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>NTA - Noble Trainning Academy</title>
+        <title>ATR - Alpha Training & Recognition</title>
 
         {{-- Style Sheets --}}
         @include('admin.layouts.styles')

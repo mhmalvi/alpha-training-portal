@@ -14,11 +14,13 @@ import LoadingStates from '@/component/LoadingStates'
 import OfflineStates from '@/component/OfflineStates'
 import SyncBrowserHistory from '@/component/SyncBrowserHistory'
 import SupportAlpine from '@/component/SupportAlpine'
+import SupportStacks from '@/component/SupportStacks'
 
 class Livewire {
     constructor() {
         this.connection = new Connection()
         this.components = store
+        this.devToolsEnabled = false
         this.onLoadCallback = () => { }
     }
 
@@ -64,6 +66,10 @@ class Livewire {
         this.components.on(event, callback)
     }
 
+    devTools(enableDevtools) {
+        this.devToolsEnabled = enableDevtools
+    }
+
     restart() {
         this.stop()
         this.start()
@@ -107,8 +113,11 @@ if (!window.Livewire) {
     window.Livewire = Livewire
 }
 
+monkeyPatchDomSetAttributeToAllowAtSymbols()
+
 SyncBrowserHistory()
 SupportAlpine()
+SupportStacks()
 FileDownloads()
 OfflineStates()
 LoadingStates()
@@ -121,3 +130,26 @@ Polling()
 dispatch('livewire:available')
 
 export default Livewire
+
+function monkeyPatchDomSetAttributeToAllowAtSymbols() {
+    // Because morphdom may add attributes to elements containing "@" symbols
+    // like in the case of an Alpine `@click` directive, we have to patch
+    // the standard Element.setAttribute method to allow this to work.
+    let original = Element.prototype.setAttribute
+
+    let hostDiv = document.createElement('div')
+
+    Element.prototype.setAttribute = function newSetAttribute(name, value) {
+        if (! name.includes('@')) {
+            return original.call(this, name, value)
+        }
+
+        hostDiv.innerHTML = `<span ${name}="${value}"></span>`
+
+        let attr = hostDiv.firstElementChild.getAttributeNode(name)
+
+        hostDiv.firstElementChild.removeAttributeNode(attr)
+
+        this.setAttributeNode(attr)
+    }
+}
