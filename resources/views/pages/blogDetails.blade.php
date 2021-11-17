@@ -27,7 +27,7 @@
                 <h2  style="text-align: left;">{{$blog->blog_title}}</h2>
             </div>
 
-            <div class="entry-cover-single" data-bg-image="{{asset('storage/blogs/'.$blog->thumbnail)}}"></div>
+            <img class="img-fluid rounded" src="{{asset('storage/blogs/'.$blog->thumbnail)}}" alt="{{$blog->blog_title}}">
 
             <div class="row" style="padding: 20px 0px;">
                 <div class="col-sm-3">
@@ -43,9 +43,9 @@
                     </div>
                 </div>
                 <div class="col-sm-9" style="text-align: justify;">
-                    @php
-                        echo $blog->blog_details;
-                    @endphp
+                    <div class="blog-body">
+                        {!!$blog->blog_details!!}
+                    </div>
                 </div>
             </div>
         </div>
