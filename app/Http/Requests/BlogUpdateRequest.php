@@ -29,7 +29,6 @@ class BlogUpdateRequest extends BlogRequest
             'blog_slug' => 'unique:App\Models\Blog,blog_slug',
             'summary' => 'required|max:255',
             'summernote' => 'required',
-            'image' => 'image|mimes:png,jpg,jpeg|max:2048'
         ];
     }
 
@@ -37,7 +36,7 @@ class BlogUpdateRequest extends BlogRequest
     public function update($blog)
     {
         $blog->blog_title = $this->title;
-        $blog->blog_slug = $this->has('urlSlug') ? $this->urlSlug : Str::slug($this->title);
+        $blog->blog_slug = $this->filled('urlSlug') ? $this->urlSlug : Str::slug($this->title);
         $blog->blog_summery = $this->summary;
         $blog->blog_details = $this->summernote;
         $blog->category_id = $this->category;

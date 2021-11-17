@@ -26,7 +26,7 @@ class BlogCreateRequest extends BlogRequest
     public function rules()
     {
         return [
-            'title' => 'required|max:100|unique:App\Models\Blog,blog_title',
+            'title' => 'required|max:255|unique:App\Models\Blog,blog_title',
             'blog_slug' => 'unique:App\Models\Blog,blog_slug',
             'summary' => 'required|max:255',
             'summernote' => 'required',
@@ -35,12 +35,10 @@ class BlogCreateRequest extends BlogRequest
 
     public function save()
     {
-        $slug = Str::slug($this->title);
-
         $blog = Blog::create([
             'user_id' => Auth::id(),
             'blog_title' => $this->title,
-            'blog_slug' => $this->filled('urlSlug') ? $this->urlSlug : $slug,
+            'blog_slug' => $this->filled('urlSlug') ? $this->urlSlug : Str::slug($this->title),
             'category_id' => $this->category ? $this->category : null,
             'blog_summery' => $this->summary,
             'blog_details' => $this->summernote,
@@ -48,7 +46,7 @@ class BlogCreateRequest extends BlogRequest
             'meta_keys' => $this->meta_keys,
             'meta_desc' => $this->meta_desc,
             'thumbnail' => ($this->hasFile('image')) ? $this->saveFile() : null,
-            'thumbnail_alt' => $this->has('thumbnail_alt') ? $this->thumbnail_alt : null
+            'thumbnail_alt' => $this->filled('thumbnail_alt') ? $this->thumbnail_alt : null
         ]);
 
         return $blog;
