@@ -40,7 +40,7 @@ class BlogCreateRequest extends BlogRequest
         $blog = Blog::create([
             'user_id' => Auth::id(),
             'blog_title' => $this->title,
-            'blog_slug' => ($this->has('urlSlug')) ? $this->urlSlug : $slug,
+            'blog_slug' => $this->filled('urlSlug') ? $this->urlSlug : $slug,
             'category_id' => $this->category ? $this->category : null,
             'blog_summery' => $this->summary,
             'blog_details' => $this->summernote,
