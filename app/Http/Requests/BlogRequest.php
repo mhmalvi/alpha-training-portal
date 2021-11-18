@@ -22,8 +22,12 @@ class BlogRequest extends FormRequest
         }
 
         Image::make($file)
-            ->fit(1140, 500)
+            ->fit(1285, 720)
             ->save(storage_path('app/public/blogs/' . $filename));
+
+        Image::make($file)
+            ->fit(822, 480)
+            ->save(storage_path('app/public/thumbnails/' . $filename));
 
         return $filename;
     }

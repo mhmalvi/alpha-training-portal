@@ -17,7 +17,7 @@
                                     <div class="row no-gutters">
                                         <div class="col-md-5">
                                             <a href="{{route('blogDetail', $blog->blog_slug)}}">
-                                                <img src="{{asset('storage/blogs/'.$blog->thumbnail)}}" alt="blog" class="img-fluid rounded">
+                                                <img src="{{asset('storage/thumbnails/'.$blog->thumbnail)}}" alt="blog" class="img-fluid rounded">
                                             </a>
                                         </div>
                                         <div class="col-md-7">

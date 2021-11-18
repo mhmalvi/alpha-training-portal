@@ -2917,3 +2917,6 @@ form input[type="submit"]:hover {
     max-width: 100% !important;
     height: auto !important;
 }
+.text-left {
+    text-align: left !important;
+}
