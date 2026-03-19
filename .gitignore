@@ -10,3 +10,7 @@ yarn-error.log
 *.zip
 *.rar
 .env
+.env.*
+credentials.json
+serviceAccountKey.json
+.claude/
